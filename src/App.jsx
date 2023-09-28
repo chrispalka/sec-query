@@ -1,35 +1,46 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import axios from 'axios';
+import './App.css';
+
+const api = import.meta.env.VITE_API_DOMAIN;
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [data, setData] = useState([]);
+  const getData = () => {
+    axios(api).then((res) => {
+      const { filings } = res.data.queryResponse;
+      setData(filings);
+      console.log(data);
+    });
+  };
 
   return (
     <>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <button onClick={getData}>Go</button>
+        <table>
+          <thead>
+            <tr>
+              <th>Company Name</th>
+              <th>CIK</th>
+              <th>Filed At</th>
+              <th>formType</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((x, i) => (
+              <tr key={i}>
+                <td>{x.companyName}</td>
+                <td>{x.cik}</td>
+                <td>{x.filedAt}</td>
+                <td>{x.formType}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
